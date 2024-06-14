@@ -41,10 +41,10 @@ contract EnglishAuction {
         emit Start();
     }
 
-    function bid(uint256 _amount) external payable {
+    function bid() external payable {
         require(started, "Auction has not started");
-        require(!ended, "Auction has expired");
-        require(_amount > highestBid, "Sent amount must be greater than previous bid");
+        require(block.timestamp < endAt, "Auction has expired");
+        require(msg.value > highestBid, "Sent amount must be greater than previous bid");
         
         if (highestBidder != address(0)) {
             bids[highestBidder] += highestBid;
