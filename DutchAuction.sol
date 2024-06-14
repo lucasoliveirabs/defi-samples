@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {IERC721} from "sce/sol/IERC721.sol";
+interface IERC721 {
+    function transferFrom(address from, address to, uint nftId) external;
+}
 
 contract DutchAuction {
     uint256 private constant DURATION = 7 days;
