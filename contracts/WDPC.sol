@@ -35,9 +35,17 @@ contract WDPC is ERC20 {
     }
 
     function withdraw(uint256 _withdrawAmount) payable external {
-        _burn(msg.sender, _withdrawAmount);
+        require(msg.value != 0, "Requested value is zero");
+        require(address(this).balance >= _withdrawAmount, "Insufficient balance");
+
+        uint256 unsignedPrice = uint256(getLatestETHUSDPrice());
+        require(_withdrawAmount <= type(uint256).max / unsignedPrice, "Results in overflow");
+        uint256 burnAmount = _withdrawAmount * uint256(unsignedPrice);
+        require(burnAmount <= totalSupply(), "Insufficient supply");
+
         payable(msg.sender).transfer(_withdrawAmount);
-        emit Withdraw(msg.sender, _withdrawAmount, 0);
+        _burn(msg.sender, burnAmount);
+        emit Withdraw(msg.sender, _withdrawAmount, burnAmount);
     }
 
     function getLatestETHUSDPrice() public view returns (int) {
